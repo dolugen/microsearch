@@ -175,7 +175,7 @@ class MicrosearchTestCase(unittest.TestCase):
         self.assertTrue(os.path.exists(raw_index))
 
         with open(raw_index, 'r') as raw_index_file:
-            self.assertEqual(raw_index_file.read(), 'hello\t{"bcd": [3, 4], "abc": [1, 5]}\n')
+            self.assertEqual(raw_index_file.read(), 'hello\t{"abc": [1, 5], "bcd": [3, 4]}\n')
 
     def test_unhashed_save_segment(self):
         raw_index = self.unhashed_micro.make_segment_name('hello')
@@ -196,7 +196,7 @@ class MicrosearchTestCase(unittest.TestCase):
         self.assertTrue(os.path.exists(raw_index))
 
         with open(raw_index, 'r') as raw_index_file:
-            self.assertEqual(raw_index_file.read(), 'alpha\t{"efg": [9, 10]}\nhell\t{"ab": [2]}\nhello\t{"bcd": [3, 4], "abc": [1, 5]}\nzeta\t{"efg": [1, 3]}\n')
+            self.assertEqual(raw_index_file.read(), 'alpha\t{"efg": [9, 10]}\nhell\t{"ab": [2]}\nhello\t{"abc": [1, 5], "bcd": [3, 4]}\nzeta\t{"efg": [1, 3]}\n')
 
     def test_load_segment(self):
         raw_index = self.micro.make_segment_name('hello')
@@ -305,7 +305,7 @@ class MicrosearchTestCase(unittest.TestCase):
             self.assertEqual(lines[0], 'a-a\t{"email_2": [8]}\n')
             self.assertEqual(lines[1], 'a-an\t{"email_2": [8]}\n')
             self.assertEqual(lines[19], 'desk\t{"email_1": [9, 16]}\n')
-            self.assertEqual(lines[74], 'report\t{"email_3": [12], "email_1": [7]}\n')
+            self.assertEqual(lines[74], 'report\t{"email_1": [7], "email_3": [12]}\n')
 
         self.assertEqual(self.micro.get_total_docs(), 4)
 
@@ -387,15 +387,15 @@ class MicrosearchTestCase(unittest.TestCase):
             'total_hits': 2,
             'results': [
                 {
+                    'text': "Peter,\n\nI'm going to need those TPS reports on my desk first thing tomorrow! And clean up your desk!\n\nLumbergh",
+                    'score': 0.5572567355483165,
+                    'id': 'email_1'
+                },
+                {
                     'text': "Peter,\n\nYeah, I'm going to need you to come in on Saturday. Don't forget those reports.\n\nLumbergh",
                     'score': 0.5572567355483165,
                     'id': 'email_3'
                 },
-                {
-                    'text': "Peter,\n\nI'm going to need those TPS reports on my desk first thing tomorrow! And clean up your desk!\n\nLumbergh",
-                    'score': 0.5572567355483165,
-                    'id': 'email_1'
-                }
             ]
         })
         self.assertEqual(self.micro.search('desk'), {
@@ -412,14 +412,14 @@ class MicrosearchTestCase(unittest.TestCase):
             'total_hits': 3,
             'results': [
                 {
-                    'text': "Peter,\n\nYeah, I'm going to need you to come in on Saturday. Don't forget those reports.\n\nLumbergh",
-                    'score': 0.44274326445168355,
-                    'id': 'email_3'
-                },
-                {
                     'text': "Peter,\n\nI'm going to need those TPS reports on my desk first thing tomorrow! And clean up your desk!\n\nLumbergh",
                     'score': 0.44274326445168355,
                     'id': 'email_1'
+                },
+                {
+                    'text': "Peter,\n\nYeah, I'm going to need you to come in on Saturday. Don't forget those reports.\n\nLumbergh",
+                    'score': 0.44274326445168355,
+                    'id': 'email_3'
                 },
                 {
                     'text': 'How do you feel about becoming Management?\n\nThe Bobs',
